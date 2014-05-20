@@ -69,6 +69,7 @@ class User < ActiveRecord::Base
         members << m.to_json(uid, event_id, { name: e['name'], url: e['event_url'], time: e['time'], utc_offset: e['utc_offset'], venue: e['venue'], bio: gm.bio, role: gm.role }, r['response'])
         percent += rsvp_percent
         update_attribute :reindexing_progress, percent
+        sleep 0.1 if m.id_changed? || gm.id_changed? # throttling...
       end
       RSVPS_INDEX.add_objects members
     end
