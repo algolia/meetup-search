@@ -1,7 +1,7 @@
 require "bundler/capistrano"
 
 set :default_environment, {
-  'GIT_SSH' => '/home/prod/ssh-meetup.sh'
+  'GIT_SSH' => '/home/prod/ssh-meetup-search.sh'
 }
 
 default_run_options[:pty] = true 
@@ -62,7 +62,7 @@ namespace :bluepill do
 
   desc "Load bluepill configuration and start it"
   task :start, :roles => [:cron] do
-    run "cd #{current_path} && bundle exec bluepill --no-privileged load #{release_path}/config/production.pill"
+    run "cd #{current_path} && bundle exec bluepill --no-privileged load #{current_path}/config/production.pill"
   end
 
   desc "Prints bluepills monitored processes statuses"
