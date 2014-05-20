@@ -1,0 +1,17 @@
+@import "bootstrap";
+
+// body.modal-open {
+//   header, section, footer {
+//     filter: blur(1px);
+//     -webkit-filter: blur(1px);
+//     -moz-filter: blur(1px);
+//     -o-filter: blur(1px);
+//     -ms-filter: blur(1px);
+//   }
+// }
+
+.bg-color-white { background: white; }
+
+.btn-red {
+  @include button-variant(white, rgb(224, 57, 62), rgb(224, 57, 62));
+}

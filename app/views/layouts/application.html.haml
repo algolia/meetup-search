@@ -1,0 +1,29 @@
+!!!
+%html
+  %head
+    %meta{:name => "viewport", :content => "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, minimal-ui"}
+    %title= content_for?(:title) ? yield(:title) : 'Meetup Search powered by Algolia'
+    %meta{:name => "description", :content => "Search Meetup's RSVPs."}
+    %link{:rel => "shortcut icon", :href=> '/favicon.ico'}
+    = stylesheet_link_tag 'http://static1.meetupstatic.com/fonts/whitney.css'
+    = stylesheet_link_tag 'application', media: 'all'
+    = javascript_include_tag 'application'
+    = csrf_meta_tags
+
+    %meta{name: "twitter:card", content: "summary"}
+    %meta{name: "twitter:site", content: "@algolia"}
+    %meta{name: "twitter:title", content: "Meetup Search powered by Algolia"}
+    %meta{name: "twitter:description", content: "Search Meetup's RSVPs"}
+    /%meta{name: "twitter:image:src", content: asset_url('capture.png')}
+    %meta{name: "twitter:domain", content: request.host}
+
+    %meta{property: "st:title", content: "Meetup Search" }
+    %meta{property: "og:url", content: request.url }
+    %meta{property: "og:site_name", content: 'Meetup Search' }
+    %meta{property: "og:title", content: 'Meetup Search powered by Algolia' }
+    %meta{property: "og:description", content: "Search Meetup's RSVPs" }
+    /%meta{property: "og:image", content: asset_url('capture.png') }
+    /%meta{property: "og:image:width", content: '612' }
+    /%meta{property: "og:image:height", content: '382' }
+  %body
+    = yield

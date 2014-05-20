@@ -1,0 +1,17 @@
+Bluepill.application("meetup-search", :log_file => "/var/www/meetup-search/current/log/bluepill.log") do |app|
+  (1..8).each do |i|
+    app.process("meetup-delayed_job.#{i}") do |process|
+      process.working_dir = "/var/www/meetup-search/current"
+      process.environment = { 'RAILS_ENV' => 'production' }
+
+      process.start_grace_time    = 30.seconds
+      process.stop_grace_time     = 30.seconds
+      process.restart_grace_time  = 30.seconds
+
+      process.start_command = "./bin/delayed_job start -i #{i}"
+      process.stop_command  = "./bin/delayed_job stop -i #{i}"
+
+      process.pid_file = "/var/www/meetup-search/shared/pids/delayed_job.#{i}.pid"
+    end
+  end
+end

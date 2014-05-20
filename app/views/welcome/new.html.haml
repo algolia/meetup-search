@@ -1,0 +1,244 @@
+.modal.fade#modal-sign-in
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button{type: "button", class: "close", "data-dismiss" => "modal", "aria-hidden" => true} &times;
+        %h3.modal-title Sign in with your Meetup account
+      .modal-body
+        .text-center.m-t.m-b
+          = link_to "Sign in with Meetup", '/auth/meetup', class: 'btn btn-red'
+      .modal-footer
+        %button{type: "button", class: "btn btn-default", "data-dismiss" => "modal"} Cancel
+
+.modal.fade#modal-progress
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3.modal-title We're indexing your data
+      .modal-body
+        .h4.text-center Please wait while we're retrieving your data...
+        .progress.progress-striped.active
+          .progress-bar{role: "progressbar", style: "width: 0%;"}
+            0%
+        %h5.text-center (Can take up to 10 minutes on the first time)
+
+%header
+  .container
+    .row
+      .col-xs-6.col-sm-8.text-left
+        %h3.logo
+          = link_to root_path do
+            = image_tag "http://img2.meetupstatic.com/img/header/logo-2x.png", height: 45
+          %span.hidden-xs
+            Meetup Search
+            %span.hidden-sm.hidden-xs by Algolia 
+      .col-xs-6.col-sm-4.text-right
+        - if current_user
+          = link_to "Sign out", signout_path, method: :delete, class: 'logout'
+        - else
+          = link_to "Sign in with Meetup", '/auth/meetup', class: 'login'
+
+%section.search-wrapper
+  .container
+    .row.hidden-search
+      .col-lg-12
+        %h1.text-center.hidden-xs
+          Search your meetups
+          %span.hidden-sm.hidden-xs & their attendees
+      .col-lg-12.text-center.m-t
+        %a.m-r.twitter-follow-button{href: "https://twitter.com/algolia", "data-show-count" => "false", "data-show-screen-name" => "true"} Follow @algolia
+        %a.m-l.twitter-share-button{href: "https://twitter.com/share", "data-url" => root_url, "data-via" => "algolia", 'data-text' => 'Search your meetups & attendees'} Tweet
+    .row
+      .col-md-8.col-md-offset-2.col-sm-12
+        .search-form
+          .search-input
+            %input{type: 'text', name: 'q', id: 'q', placeholder: 'Search meetups & attendees', autocomplete: 'off', spellcheck: false}
+            .branding
+              search by
+              = link_to "http://www.algolia.com" do
+                = image_tag "http://www.algolia.com/assets/algolia_white.png"
+
+%section.home-wrapper
+  .container
+    .row.m-t
+      .col-sm-3
+        .text-center
+          %i.text-5em.fa.fa-retweet
+        %h3.text-center Connect
+        %p.text-justify Connect with attendees sharing your interests even before meeting them.
+      .col-sm-3.col-sm-offset-1
+        .text-center
+          %i.text-5em.fa.fa-exchange
+        %h3.text-center Network
+        %p.text-justify Add them to your LinkedIn, Twitter & Facebook networks.
+      .col-sm-3.col-sm-offset-1
+        .text-center
+          %i.text-5em.fa.fa-repeat
+        %h3.text-center Remember
+        %p.text-justify Find people you've met the day before, even if you don't know their full name.
+    .row.m-t
+      .col-md-6.col-md-offset-3
+        .well.bg-color-white
+          %h3 Features
+          %ul
+            %li.h4 Search across your upcoming and past meetups
+            %li.h4 Typo-tolerated attendees search
+            %li.h4 Multi-attributes search, single searchbox
+
+%section.hits-wrapper
+  .container
+    .col-sm-3.hidden-xs#facets
+    .col-sm-9#hits
+
+%footer
+  .text-center
+    Meetup Search powered by
+    = link_to "http://www.algolia.com" do
+      = image_tag "http://www.algolia.com/assets/algolia128x40.png"
+    –
+    Fork us on
+    = link_to "http://github.com/algolia/meetup-search" do
+      github
+      %i.fa.fa-github
+
+%script#hit-template{type: 'text/template'}
+  :plain
+    <div class="hit">
+      <div class="thumb">
+        <img src="{{ photo.thumb_link }}" />
+      </div>
+      <div class="actions">
+      </div>
+      <div class="infos">
+        <h3>
+          <a href="{{ link }}">{{{ _highlightResult.name.value }}}</a>
+          {{#other_services.twitter.identifier}}
+            <small><a class="twitter-follow-button" style="display: none" href="https://twitter.com/{{ other_services.twitter.identifier }}" data-show-count="true" data-show-screen-name="true"> Follow {{ other_services.twitter.identifier }}</a></small>
+          {{/other_services.twitter.identifier}}
+        </h3>
+        <h4>Seen at: {{{ _highlightResult.event.name.value }}} <small>({{{ _highlightResult.event.venue.name.value }}})</small></h4>
+        <p class="m-t">
+          {{{ _highlightResult.bio.value }}}
+          {{{ _highlightResult.group_bio.value }}}
+        </p>
+      </div>
+      <div class="clearfix"></div>
+      <div class="topics">
+        {{#first_topics}}
+          <span class="label label-info">{{name}}</span>
+        {{/first_topics}}
+        {{#other_topics_count}}
+          <small><a href="#" onclick="$(this).hide().closest('.topics').find('span').show(); return false;" class="text-muted">See {{other_topics_count}} more...</a></small>
+          {{#other_topics}}
+            <span class="label label-info" style="display: none">{{name}}</span>
+          {{/other_topics}}
+        {{/other_topics_count}}
+      </div>
+    </div>
+
+
+- if current_user
+  - if current_user.reindexing_progress < 100
+    :javascript
+      (function() {
+        var $progressbar = $('#modal-progress').find('.progress-bar');
+        $progressbar.css('width', '#{current_user.reindexing_progress}%').text('#{current_user.reindexing_progress}%');
+
+        function progress() {
+          $.ajax('#{progress_path}', { type: 'GET', cache: false }).done(function(data) {
+            $progressbar.css('width', data.progress + '%').text(data.progress + '%');
+            if (data.progress < 100) {
+              setTimeout(progress, 1000);
+            } else {
+              $('#modal-progress').modal('hide');
+            }
+          });
+        }
+
+        $('#modal-progress').modal({ keyboard: false, backdrop: 'static' });
+        progress();
+      })();
+  :javascript
+    (function() {
+      var algolia = new AlgoliaSearch('#{ENV['ALGOLIA_APPLICATION_ID']}', '#{@secured_api_key}');
+      algolia.setSecurityTags('user_#{current_user.uid}');
+      window.helper = new AlgoliaSearchHelper(algolia, '#{RSVPS_INDEX.name}', {
+        facets: ['city', 'topics.name', 'event.name', 'event.venue.name']
+      });
+      var $q = $('#q');
+      var $facets = $('#facets');
+      var $hits = $('#hits');
+      var hitTemplate = Hogan.compile($('#hit-template').text());
+      var twitterReloader = null;
+
+      var LABELS = {
+        'city' : 'City',
+        'topics.name' : 'Topics',
+        'event.name' : 'Events',
+        'event.venue.name' : 'Venues'
+      };
+
+      function reloadTwitter() {
+        $('.twitter-follow-button').show();
+        twttr.widgets.load();
+      }
+
+      function searchCallback(success, content) {
+        if (!success || content.query != $q.val()) {
+          // skip invalid or outdated query
+          return;
+        }
+
+        var html = '';
+        for (var i = 0; i < content.hits.length; ++i) {
+          var hit = content.hits[i];
+          hit.first_topics = hit.topics.slice(0, 10);
+          hit.other_topics = hit.topics.slice(10);
+          hit.other_topics_count = hit.other_topics.length;
+          html += hitTemplate.render(hit);
+        }
+        $hits.html(html);
+
+        html = '';
+        for (var facet in content.facets) {
+          var values = [];
+          for (var f in content.facets[facet]) {
+            values.push([f, content.facets[facet][f]]);
+          }
+          values.sort(function(a, b) { b[1] - a[1] });
+          html += '<h3>' + LABELS[facet] + '</h3>' +
+            '<ul class="list-unstyled">' +
+              $.map(values, function(e) { return '<li class="' + (helper.isRefined(facet, e[0]) ? 'active' : '') + '"><a href="#" onclick="helper.toggleRefine(\'' + facet + '\', \'' + e[0] + '\'); return false;">' + e[0] + '</a> (' + e[1] + ')'; }).join('') +
+            '</ul>';
+        }
+        $facets.html(html);
+
+        if (twitterReloader) {
+          clearTimeout(twitterReloader);
+        }
+        twitterReloader = setTimeout(reloadTwitter, 2000);
+      }
+
+      $q.keyup(function() {
+        var q = $q.val();
+        if (q === '') {
+          helper.refinements = {};
+          $('body').removeClass('initialized');
+        } else {
+          $('body').addClass('initialized');
+        }
+        helper.search(q, searchCallback, { distinct: true, maxValuesPerFacet: 10, queryType: 'prefixAll', minWordSizefor1Typo: 4, minWordSizefor2Typos: 8 });
+      }).focus();
+    })();
+- else
+  :javascript
+    (function() {
+      var $q = $('#q');
+      $q.keyup(function() {
+        $('#modal-sign-in').modal('show');
+        return false;
+      });
+    })();
+
+:javascript
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
