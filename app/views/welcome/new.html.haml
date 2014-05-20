@@ -14,11 +14,14 @@
   .modal-dialog
     .modal-content
       .modal-header
-        %h3.modal-title We're indexing your data
+        %h3.modal-title.text-center
+          Meetup
+          %i.fa.fa-exchange
+          Algolia
       .modal-body
         .h4.text-center Please wait while we're retrieving your data...
         .progress.progress-striped.active
-          .progress-bar{role: "progressbar", style: "width: 0%;"}
+          .progress-bar.progress-bar-success{role: "progressbar", style: "width: 0%;"}
             0%
         %h5.text-center (Can take up to 10 minutes on the first time)
 
