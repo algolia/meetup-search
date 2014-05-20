@@ -9,4 +9,4 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-MeetupSearch::Application.config.secret_key_base = 'd31d5a3657994e9e4736e323e3fbd3ee3b3d6540c3760678ef5dd27dc645731bcd4c14059078ee811d168ed030b04779295e25b8745b2130fcd211de521b27e6'
+MeetupSearch::Application.config.secret_key_base = ENV['SECRET_KEY_BASE']
