@@ -125,7 +125,7 @@
           {{/other_services.twitter.identifier}}
         </h3>
         <ul class="h4 list-unstyled">
-          <li>Seen at: {{{ _highlightResult.event.name.value }}}{{#event.role}}, {{ event.role }}{{/event.role}} <small>({{{ _highlightResult.event.venue.name.value }}})</small></li>
+          <li>Seen at: {{{ _highlightResult.event.name.value }}}{{#event.role}}, {{ event.role }}{{/event.role}} <small>({{event.at}} @ {{{ _highlightResult.event.venue.name.value }}})</small></li>
         </ul>
         <p class="m-t">
           {{{ _highlightResult.bio.value }}}
@@ -160,6 +160,8 @@
       var $hits = $('#hits');
       var hitTemplate = Hogan.compile($('#hit-template').text());
       var twitterReloader = null;
+      var localUTCOffset = new Date().getTimezoneOffset() * 60 * 1000;
+      jQuery.timeago.settings.allowFuture = true;
 
       var LABELS = {
         'city' : 'City',
@@ -185,6 +187,7 @@
           hit.first_topics = hit.topics.slice(0, 10);
           hit.other_topics = hit.topics.slice(10);
           hit.other_topics_count = hit.other_topics.length;
+          hit.event.at = $.timeago(new Date(hit.event.time + hit.event.utc_offset + localUTCOffset));
           html += hitTemplate.render(hit);
         }
         $hits.html(html);
