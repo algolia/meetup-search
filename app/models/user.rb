@@ -30,12 +30,12 @@ class User < ActiveRecord::Base
 
   def profile
     refresh_token!
-    @profile ||= JSON.parse meetup_client.get_path("/2/member/#{uid}")
+    @profile ||= JSON.parse meetup_get("/2/member/#{uid}")
   end
 
   def events(offset = 0, page = 20)
     refresh_token!
-    @events ||= JSON.parse(meetup_client.get_path("/2/events", rsvp: 'yes,maybe,waitlist', limited_events: true, member_id: uid, offset: offset, page: page, status: 'upcoming,past', desc: true))['results']
+    @events ||= JSON.parse(meetup_get("/2/events", rsvp: 'yes,maybe,waitlist', limited_events: true, member_id: uid, offset: offset, page: page, status: 'upcoming,past', desc: true))['results']
   end
 
   def rsvps(event_id)
@@ -44,7 +44,7 @@ class User < ActiveRecord::Base
     page = 50
     offset = 0
     loop do
-      r = JSON.parse(meetup_client.get_path("/2/rsvps", event_id: event_id, offset: offset, page: page))['results']
+      r = JSON.parse(meetup_get("/2/rsvps", event_id: event_id, offset: offset, page: page))['results']
       results += r
       break if r.length != page
       offset += 1
@@ -68,12 +68,11 @@ class User < ActiveRecord::Base
       rlist.each do |r|
         member_uid = r['member']['member_id']
         attendees << member_uid
-        m = Member.where(uid: member_uid).first || Member.create_with_json(member_uid, meetup_client.get_path("/2/member/#{member_uid}", fields: 'membership_count'))
-        gm = GroupMember.where(gid: group_id, uid: member_uid).first || GroupMember.create_with_json(group_id, member_uid, meetup_client.get_path("/2/profile/#{group_id}/#{member_uid}"))
+        m = Member.where(uid: member_uid).first || Member.create_with_json(member_uid, meetup_get("/2/member/#{member_uid}", fields: 'membership_count'))
+        gm = GroupMember.where(gid: group_id, uid: member_uid).first || GroupMember.create_with_json(group_id, member_uid, meetup_get("/2/profile/#{group_id}/#{member_uid}"))
         members << m.to_json(uid, event_id, { name: e['name'], url: e['event_url'], time: e['time'], utc_offset: e['utc_offset'], venue: e['venue'], bio: gm.bio, role: gm.role }, r['response'])
         percent += rsvp_percent
         update_attributes reindexing_progress: percent, events_count: events_count, attendees_count: attendees.size
-        sleep 0.1 if m.id_changed? || gm.id_changed? # throttling...
       end
       RSVPS_INDEX.add_objects members
     end
@@ -88,6 +87,20 @@ class User < ActiveRecord::Base
       @client.access_token = token
     end
     return @client
+  end
+
+  def meetup_get(*args)
+    begin
+      meetup_client.get_path(*args)
+    rescue
+      sleep 2 # throttling...
+      begin
+        meetup_client.get_path(*args)
+      rescue
+        sleep 5 # throttling...
+        meetup_client.get_path(*args)
+      end
+    end
   end
 
 end
