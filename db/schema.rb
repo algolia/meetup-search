@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140520152335) do
+ActiveRecord::Schema.define(version: 20140521082118) do
 
   create_table "delayed_jobs", force: true do |t|
     t.integer  "priority",   default: 0, null: false
@@ -53,6 +53,8 @@ ActiveRecord::Schema.define(version: 20140520152335) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "reindexing_progress", default: 0, null: false
+    t.integer  "events_count",        default: 0, null: false
+    t.integer  "attendees_count",     default: 0, null: false
   end
 
 end

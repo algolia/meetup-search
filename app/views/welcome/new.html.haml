@@ -26,6 +26,9 @@
         %h5.text-center (Can take up to 10 minutes on the first time)
 
 %header
+  .progress.progress-striped.active#indexing-progress{style: 'display: none;'}
+    .progress-bar.progress-bar-success{role: "progressbar", style: "width: 0%;"}
+      0%
   .container
     .row
       .col-xs-6.col-sm-8.text-left
@@ -141,26 +144,6 @@
 
 
 - if current_user
-  - if current_user.reindexing_progress < 100
-    :javascript
-      (function() {
-        var $progressbar = $('#modal-progress').find('.progress-bar');
-        $progressbar.css('width', '#{current_user.reindexing_progress}%').text('#{current_user.reindexing_progress}%');
-
-        function progress() {
-          $.ajax('#{progress_path}', { type: 'GET', cache: false }).done(function(data) {
-            $progressbar.css('width', data.progress + '%').text(data.progress + '%');
-            if (data.progress < 100) {
-              setTimeout(progress, 1000);
-            } else {
-              $('#modal-progress').modal('hide');
-            }
-          });
-        }
-
-        $('#modal-progress').modal({ keyboard: false, backdrop: 'static' });
-        progress();
-      })();
   :javascript
     (function() {
       var algolia = new AlgoliaSearch('#{ENV['ALGOLIA_APPLICATION_ID']}', '#{@secured_api_key}');
@@ -233,6 +216,33 @@
         helper.search(q, searchCallback, { distinct: true, maxValuesPerFacet: 10, queryType: 'prefixAll', minWordSizefor1Typo: 4, minWordSizefor2Typos: 8 });
       }).focus();
     })();
+  - if current_user.reindexing_progress < 100
+    :javascript
+      (function() {
+        var $progressbar = $('#modal-progress .progress-bar, #indexing-progress .progress-bar');
+        $progressbar.css('width', '#{current_user.reindexing_progress}%').text('#{current_user.reindexing_progress}%');
+
+        function progress() {
+          $.ajax('#{progress_path}', { type: 'GET', cache: false }).done(function(data) {
+            $('#indexing-progress').show();
+            $progressbar.css('width', data.progress + '%').text(data.progress + '% (' + data.meetups + ' meetup' + (data.meetup === 1 ? '' : 's') + ' & ' + data.attendees + ' attendee' + (data.attendee === 1 ? '' : 's') + ')');
+            if (data.progress > 10) {
+              $('#modal-progress').modal('hide');
+            }
+            if (data.progress < 100) {
+              setTimeout(progress, 1000);
+            } else {
+              $('#indexing-progress').hide();
+            }
+            window.helper.client.clearCache()
+          });
+        }
+
+        if (#{current_user.reindexing_progress} < 10) {
+          $('#modal-progress').modal({ keyboard: false, backdrop: 'static' });
+        }
+        progress();
+      })();
 - else
   :javascript
     (function() {

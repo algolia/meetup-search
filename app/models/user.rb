@@ -55,7 +55,10 @@ class User < ActiveRecord::Base
   def reindex!
     percent = 0
     event_percent = 100.0 / events.size
+    events_count = 0
+    attendees = Set.new
     events.each do |e|
+      events_count += 1
       event_id = e.delete('id')
       EVENTS_INDEX.add_object e.merge(objectID: "#{uid}_#{event_id}", _tags: [ "user_#{uid}" ])
       members = []
@@ -64,16 +67,17 @@ class User < ActiveRecord::Base
       group_id = e['group']['id']
       rlist.each do |r|
         member_uid = r['member']['member_id']
+        attendees << member_uid
         m = Member.where(uid: member_uid).first || Member.create_with_json(member_uid, meetup_client.get_path("/2/member/#{member_uid}", fields: 'membership_count'))
         gm = GroupMember.where(gid: group_id, uid: member_uid).first || GroupMember.create_with_json(group_id, member_uid, meetup_client.get_path("/2/profile/#{group_id}/#{member_uid}"))
         members << m.to_json(uid, event_id, { name: e['name'], url: e['event_url'], time: e['time'], utc_offset: e['utc_offset'], venue: e['venue'], bio: gm.bio, role: gm.role }, r['response'])
         percent += rsvp_percent
-        update_attribute :reindexing_progress, percent
+        update_attributes reindexing_progress: percent, events_count: events_count, attendees_count: attendees.size
         sleep 0.1 if m.id_changed? || gm.id_changed? # throttling...
       end
       RSVPS_INDEX.add_objects members
     end
-    update_attribute :reindexing_progress, 100
+    update_attributes reindexing_progress: 100, events_count: events_count, attendees_count: attendees.size
     nil
   end
 

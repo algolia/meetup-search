@@ -35,6 +35,25 @@ header {
     color: rgba(0, 0, 0, 0.470588);
     margin-top: 2em;
   }
+
+  #indexing-progress {
+    height: auto;
+    margin: 0px;
+
+    .progress-bar {
+      height: 5px;
+      text-indent: -10000px;
+    }
+
+    &:hover {
+      .progress-bar {
+        height: 20px;
+        text-indent: 0px;
+      }
+    }
+
+
+  }
 }
 
 section.search-wrapper {

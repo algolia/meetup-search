@@ -26,7 +26,9 @@ class SessionsController < ApplicationController
 
   def progress
     render json: {
-      progress: (current_user && current_user.reindexing_progress) || 0
+      progress: (current_user && current_user.reindexing_progress) || 0,
+      meetups: (current_user && current_user.events_count) || 0,
+      attendees: (current_user && current_user.attendees_count) || 0,
     }
   end
 
