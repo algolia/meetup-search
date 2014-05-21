@@ -223,7 +223,7 @@
         } else {
           $('body').addClass('initialized');
         }
-        helper.search(q, searchCallback, { distinct: true, maxValuesPerFacet: 10, queryType: 'prefixAll', minWordSizefor1Typo: 4, minWordSizefor2Typos: 8, advancedSyntax: true });
+        helper.search(q, searchCallback, { distinct: true, maxValuesPerFacet: 10, minWordSizefor1Typo: 4, minWordSizefor2Typos: 8, advancedSyntax: true });
       }).focus();
     })();
   - if current_user.reindexing_progress < 100
