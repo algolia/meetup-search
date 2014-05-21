@@ -23,7 +23,7 @@
         .progress.progress-striped.active
           .progress-bar.progress-bar-success{role: "progressbar", style: "width: 0%;"}
             0%
-        %h5.text-center (Can take up to 10 minutes on the first time)
+        %h5.text-center (You'll be able to search as soon as 10% of your data has been retrieved, the other 90% will be retrieved later)
 
 %header
   .progress.progress-striped.active#indexing-progress{style: 'display: none;'}
@@ -230,7 +230,7 @@
           $.ajax('#{progress_path}', { type: 'GET', cache: false }).done(function(data) {
             $('#indexing-progress').show();
             $progressbar.css('width', data.progress + '%').text(data.progress + '% (' + data.meetups + ' meetup' + (data.meetup === 1 ? '' : 's') + ' & ' + data.attendees + ' attendee' + (data.attendee === 1 ? '' : 's') + ')');
-            if (data.progress > 10) {
+            if (data.progress > 10 || data.attendee > 100) {
               $('#modal-progress').modal('hide');
             }
             if (data.progress < 100) {
@@ -242,7 +242,7 @@
           });
         }
 
-        if (#{current_user.reindexing_progress} < 10) {
+        if (#{current_user.reindexing_progress} < 10 && #{current_user.attendees_count} < 100) {
           $('#modal-progress').modal({ keyboard: false, backdrop: 'static' });
         }
         progress();
