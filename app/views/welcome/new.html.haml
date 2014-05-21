@@ -129,7 +129,10 @@
         </ul>
         <p class="m-t">
           {{{ _highlightResult.bio.value }}}
+          {{#event.bio}}
+          </p><p class="m-t">
           {{{ _highlightResult.event.bio.value }}}
+          {{/event.bio}}
         </p>
       </div>
       <div class="clearfix"></div>
