@@ -129,14 +129,8 @@ section.hits-wrapper {
       }
     }
 
-    .actions {
-      float: right;
-      width: 150px;
-    }
-
     .infos {
       margin-left: 100px;
-      margin-right: 170px;
     }
 
     .topics {
@@ -184,6 +178,29 @@ body.initialized {
       width: auto;
     }
   }
+
+  section.hits-wrapper {
+    padding-left: 0px;
+    padding-right: 0px;
+
+    .container {
+      padding: 0px;
+      margin: 0px;
+    }
+
+    .hit {
+      .infos {
+        margin-left: 0px;
+
+        h3 {
+          img {
+            display: inline-block !important;
+            height: 1.5em;
+          }
+        }
+      }
+    }
+  } 
 }
 
 footer {

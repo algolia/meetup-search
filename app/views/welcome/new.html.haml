@@ -51,7 +51,7 @@
         %h1.text-center.hidden-xs
           Search your meetups
           %span.hidden-sm.hidden-xs & their attendees
-      .col-lg-12.text-center.m-t
+      .col-lg-12.text-center.m-t.hidden-xs
         %a.m-r.twitter-follow-button{href: "https://twitter.com/algolia", "data-show-count" => "false", "data-show-screen-name" => "true"} Follow @algolia
         %a.m-l.twitter-share-button{href: "https://twitter.com/share", "data-url" => root_url, "data-via" => "algolia", 'data-text' => 'Search your meetups & attendees'} Tweet
     .row
@@ -110,26 +110,30 @@
 %script#hit-template{type: 'text/template'}
   :plain
     <div class="hit">
-      <div class="thumb">
+      <div class="thumb hidden-xs">
         <img src="{{ photo.thumb_link }}" />
-      </div>
-      <div class="actions">
       </div>
       <div class="infos">
         <h3>
+          <img src="{{ photo.thumb_link }}" class="visible-xs" />
           <a href="{{ link }}">{{{ _highlightResult.name.value }}}</a>
+          {{#other_services.linkedin.identifier}}
+          <a href="{{other_services.linkedin.identifier}}"><img src="//developer.linkedin.com/sites/default/files/LinkedIn_Logo16px.png" /></a>
+          {{/other_services.linkedin.identifier}}
           {{#other_services.twitter.identifier}}
-            <small><a class="twitter-follow-button" style="display: none" href="https://twitter.com/{{ other_services.twitter.identifier }}" data-show-count="true" data-show-screen-name="true"> Follow {{ other_services.twitter.identifier }}</a></small>
+          <a class="twitter-follow-button" style="display: none" href="https://twitter.com/{{ other_services.twitter.identifier }}" data-show-count="true" data-show-screen-name="true"> Follow {{ other_services.twitter.identifier }}</a>
           {{/other_services.twitter.identifier}}
         </h3>
-        <h4>Seen at: {{{ _highlightResult.event.name.value }}} <small>({{{ _highlightResult.event.venue.name.value }}})</small></h4>
+        <ul class="h4 list-unstyled">
+          <li>Seen at: {{{ _highlightResult.event.name.value }}}{{#event.role}}, {{ event.role }}{{/event.role}} <small>({{{ _highlightResult.event.venue.name.value }}})</small></li>
+        </ul>
         <p class="m-t">
           {{{ _highlightResult.bio.value }}}
           {{{ _highlightResult.event.bio.value }}}
         </p>
       </div>
       <div class="clearfix"></div>
-      <div class="topics">
+      <div class="topics hidden-xs">
         {{#first_topics}}
           <span class="label label-info">{{name}}</span>
         {{/first_topics}}
