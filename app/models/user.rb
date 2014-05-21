@@ -60,6 +60,7 @@ class User < ActiveRecord::Base
     events.each do |e|
       events_count += 1
       event_id = e.delete('id')
+      Event.where(uid: event_id).first || Event.create(uid: event_id, member_uid: uid, raw_cache: e.to_json)
       EVENTS_INDEX.add_object e.merge(objectID: "#{uid}_#{event_id}", _tags: [ "user_#{uid}" ])
       members = []
       rlist = rsvps(event_id)

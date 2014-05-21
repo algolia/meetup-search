@@ -4,6 +4,8 @@ MeetupSearch::Application.routes.draw do
 
   delete "/signout" => "sessions#destroy", as: :signout
 
+  get '/e/:id', as: :event, controller: 'welcome', action: 'event'
+
   match '/progress', via: [:get, :post, :xhr], as: :progress, controller: 'sessions', action: 'progress'
 
   root "welcome#new"

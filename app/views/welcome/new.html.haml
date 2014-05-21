@@ -49,11 +49,15 @@
     .row.hidden-search
       .col-lg-12
         %h1.text-center.hidden-xs
-          Search your meetups
-          %span.hidden-sm.hidden-xs & their attendees
+          - if @event
+            Search #{@event.name}'s attendees
+          - else
+            Search your meetups
+            %span.hidden-sm.hidden-xs & their attendees
       .col-lg-12.text-center.m-t.hidden-xs
         %a.m-r.twitter-follow-button{href: "https://twitter.com/algolia", "data-show-count" => "false", "data-show-screen-name" => "true"} Follow @algolia
-        %a.m-l.twitter-share-button{href: "https://twitter.com/share", "data-url" => root_url, "data-via" => "algolia", 'data-text' => 'Search your meetups & attendees'} Tweet
+        - tweet_text = @event.nil? ? 'Search your meetups & attendees' : "Search #{@event.name}''s attendees"
+        %a.m-l.twitter-share-button{href: "https://twitter.com/share", "data-url" => root_url, "data-via" => "algolia", 'data-text' => tweet_text} Tweet
     .row
       .col-md-8.col-md-offset-2.col-sm-12
         .search-form
@@ -150,13 +154,13 @@
     </div>
 
 
-- if current_user
+- if current_user || @event
   :javascript
     (function() {
       var algolia = new AlgoliaSearch('#{ENV['ALGOLIA_APPLICATION_ID']}', '#{@secured_api_key}');
-      algolia.setSecurityTags('user_#{current_user.uid}');
+      algolia.setSecurityTags('user_#{@event ? @event.member_uid : current_user.uid}#{",event_#{@event.uid}" if @event}');
       window.helper = new AlgoliaSearchHelper(algolia, '#{RSVPS_INDEX.name}', {
-        facets: ['city', 'topics.name', 'event.name', 'event.venue.name']
+        facets: ['city', 'topics.name', #{"'event.name'," if @event.nil?} 'event.venue.name']
       });
       var $q = $('#q');
       var $facets = $('#facets');
@@ -226,7 +230,7 @@
         helper.search(q, searchCallback, { distinct: true, maxValuesPerFacet: 10, minWordSizefor1Typo: 4, minWordSizefor2Typos: 8, advancedSyntax: true });
       }).focus();
     })();
-  - if current_user.reindexing_progress < 100
+  - if @event.nil? && current_user.reindexing_progress < 100
     :javascript
       (function() {
         var $progressbar = $('#modal-progress .progress-bar, #indexing-progress .progress-bar');
