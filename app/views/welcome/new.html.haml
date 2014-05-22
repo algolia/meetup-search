@@ -64,38 +64,39 @@
       .col-md-8.col-md-offset-2.col-sm-12
         .search-form
           .search-input
-            %input{type: 'text', name: 'q', id: 'q', placeholder: 'Search meetups & attendees', autocomplete: 'off', spellcheck: false, autocorrect: 'off', autocapitalize: 'off'}
+            %input{type: 'text', name: 'q', id: 'q', placeholder: (@event ? 'Search attendees by name, company, ...' : 'Search meetups & attendees'), autocomplete: 'off', spellcheck: false, autocorrect: 'off', autocapitalize: 'off'}
             .branding
               search by
               = link_to "http://www.algolia.com" do
                 = image_tag "http://www.algolia.com/assets/algolia_white.png"
 
-%section.home-wrapper
-  .container
-    .row.m-t
-      .col-sm-3
-        .text-center
-          %i.text-5em.fa.fa-retweet
-        %h3.text-center Connect
-        %p.text-justify Connect with attendees sharing your interests even before meeting them.
-      .col-sm-3.col-sm-offset-1
-        .text-center
-          %i.text-5em.fa.fa-exchange
-        %h3.text-center Network
-        %p.text-justify Add them to your LinkedIn, Twitter & Facebook networks.
-      .col-sm-3.col-sm-offset-1
-        .text-center
-          %i.text-5em.fa.fa-repeat
-        %h3.text-center Remember
-        %p.text-justify Find people you've met the day before, even if you don't know their full name.
-    .row.m-t
-      .col-md-6.col-md-offset-3
-        .well.bg-color-white
-          %h3 Features
-          %ul
-            %li.h4 Search across your upcoming and past meetups
-            %li.h4 Typo-tolerated attendees search
-            %li.h4 Multi-attributes search, single searchbox
+- unless @event
+  %section.home-wrapper
+    .container
+      .row.m-t
+        .col-sm-3
+          .text-center
+            %i.text-5em.fa.fa-retweet
+          %h3.text-center Connect
+          %p.text-justify Connect with attendees sharing your interests even before meeting them.
+        .col-sm-3.col-sm-offset-1
+          .text-center
+            %i.text-5em.fa.fa-exchange
+          %h3.text-center Network
+          %p.text-justify Add them to your LinkedIn, Twitter & Facebook networks.
+        .col-sm-3.col-sm-offset-1
+          .text-center
+            %i.text-5em.fa.fa-repeat
+          %h3.text-center Remember
+          %p.text-justify Find people you've met the day before, even if you don't know their full name.
+      .row.m-t
+        .col-md-6.col-md-offset-3
+          .well.bg-color-white
+            %h3 Features
+            %ul
+              %li.h4 Search across your upcoming and past meetups
+              %li.h4 Typo-tolerated attendees search
+              %li.h4 Multi-attributes search, single searchbox
 
 %section.hits-wrapper
   .container
@@ -223,14 +224,14 @@
 
       $q.keyup(function() {
         var q = $q.val();
-        if (q === '') {
+        if (q === '' && #{@event.nil?}) {
           helper.refinements = {};
           $('body').removeClass('initialized');
         } else {
           $('body').addClass('initialized');
         }
         helper.search(q, searchCallback, { distinct: true, maxValuesPerFacet: 10, minWordSizefor1Typo: 4, minWordSizefor2Typos: 8, advancedSyntax: true });
-      }).focus();
+      }).focus()#{".trigger('keyup')" if @event};
     })();
   - if @event.nil? && current_user.reindexing_progress < 100
     :javascript
