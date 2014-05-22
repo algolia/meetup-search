@@ -163,7 +163,7 @@
       var algolia = new AlgoliaSearch('#{ENV['ALGOLIA_APPLICATION_ID']}', '#{@secured_api_key}');
       algolia.setSecurityTags('user_#{@event ? @event.member_uid : current_user.uid}#{",event_#{@event.uid}" if @event}');
       window.helper = new AlgoliaSearchHelper(algolia, '#{RSVPS_INDEX.name}', {
-        facets: ['city', 'topics.name', #{"'event.name'," if @event.nil?} 'event.venue.name']
+        facets: ['city', 'topics.name'#{", 'event.name', 'event.venue.name'" if @event.nil?}]
       });
       var $q = $('#q');
       var $facets = $('#facets');
