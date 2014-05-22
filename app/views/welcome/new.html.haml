@@ -31,38 +31,40 @@
       0%
   .container
     .row
-      .col-xs-6.col-sm-8.text-left
-        %h3.logo
-          = link_to root_path do
-            = image_tag "http://img2.meetupstatic.com/img/header/logo-2x.png", height: 45
-          %span.hidden-xs
-            Meetup Search
-            %span.hidden-sm.hidden-xs by Algolia 
-      .col-xs-6.col-sm-4.text-right
-        - if current_user
-          = link_to "Sign out", signout_path, method: :delete, class: 'logout'
-        - else
-          = link_to "Sign in with Meetup", '/auth/meetup', class: 'login'
+      - if @event
+        .col-lg-12
+          %h3.logo.text-center Search <strong>#{@event.name}</strong>'s attendees
+      - else
+        .col-xs-6.col-sm-8.text-left
+          %h3.logo
+            = link_to root_path do
+              = image_tag "//img2.meetupstatic.com/img/header/logo-2x.png", height: 45
+            %span.hidden-xs
+              Meetup Search
+              %span.hidden-sm.hidden-xs by Algolia 
+        .col-xs-6.col-sm-4.text-right
+          - if current_user
+            = link_to "Sign out", signout_path, method: :delete, class: 'logout'
+          - else
+            = link_to "Sign in with Meetup", '/auth/meetup', class: 'login'
 
 %section.search-wrapper
   .container
-    .row.hidden-search
-      .col-lg-12
-        %h1.text-center.hidden-xs
-          - if @event
-            Search #{@event.name}'s attendees
-          - else
+    - if @event.nil?
+      .row.hidden-search
+        .col-lg-12
+          %h1.text-center.hidden-xs
             Search your meetups
             %span.hidden-sm.hidden-xs & their attendees
-      .col-lg-12.text-center.m-t.hidden-xs
-        %a.m-r.twitter-follow-button{href: "https://twitter.com/algolia", "data-show-count" => "false", "data-show-screen-name" => "true"} Follow @algolia
-        - tweet_text = @event.nil? ? 'Search your meetups & attendees' : "Search #{@event.name}''s attendees"
-        %a.m-l.twitter-share-button{href: "https://twitter.com/share", "data-url" => root_url, "data-via" => "algolia", 'data-text' => tweet_text} Tweet
+        .col-lg-12.text-center.m-t.hidden-xs
+          %a.m-r.twitter-follow-button{href: "https://twitter.com/algolia", "data-show-count" => "false", "data-show-screen-name" => "true"} Follow @algolia
+          - tweet_text = @event.nil? ? 'Search your meetups & attendees' : "Search #{@event.name}''s attendees"
+          %a.m-l.twitter-share-button{href: "https://twitter.com/share", "data-url" => root_url, "data-via" => "algolia", 'data-text' => tweet_text} Tweet
     .row
       .col-md-8.col-md-offset-2.col-sm-12
         .search-form
           .search-input
-            %input{type: 'text', name: 'q', id: 'q', placeholder: 'Search meetups & attendees', autocomplete: 'off', spellcheck: false}
+            %input{type: 'text', name: 'q', id: 'q', placeholder: 'Search meetups & attendees', autocomplete: 'off', spellcheck: false, autocorrect: 'off', autocapitalize: 'off'}
             .branding
               search by
               = link_to "http://www.algolia.com" do
