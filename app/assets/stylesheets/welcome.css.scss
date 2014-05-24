@@ -23,7 +23,6 @@ header {
   h3 {
     color: rgb(224, 57, 62);
     font-style: italic;
-    font-size: 1.5em;
 
     span {
       display: inline-block !important;
@@ -173,9 +172,21 @@ body.initialized {
 
 @media(max-width: $screen-xs-max) {
   section.search-wrapper {
+    .col-sm-12 {
+      padding: 0px;
+    }
+
     .search-form {
       margin: 5px;
       width: auto;
+
+      .search-input {
+        padding: 5px;
+
+        input#q {
+          font-size: 1em;
+        }
+      }
     }
   }
 
@@ -189,6 +200,8 @@ body.initialized {
     }
 
     .hit {
+      padding: 0px 4px 0px 4px;
+
       .infos {
         margin-left: 0px;
 
