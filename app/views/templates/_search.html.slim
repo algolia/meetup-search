@@ -36,8 +36,8 @@ div ng-controller="SearchCtrl"
           .infos
             h3
               img.visible-xs src="{{ hit.photo.thumb_link }}"
-              a href="{{ hit.link }}" bo-html="hit._highlightResult.name.value"
-              a href="{{ hit.other_services.linkedin.identifier }}" bo-if="hit.other_services.linkedin.identifier"
+              a> href="{{ hit.link }}" bo-html="hit._highlightResult.name.value"
+              a> href="{{ hit.other_services.linkedin.identifier }}" bo-if="hit.other_services.linkedin.identifier"
                 img src="//developer.linkedin.com/sites/default/files/LinkedIn_Logo16px.png"
               a.twitter-follow-button style="display: none" href="https://twitter.com/{{ hit.other_services.twitter.identifier }}" data-show-count="true" data-show-screen-name="true" bo-if="hit.other_services.twitter.identifier"
                 | Follow {{ hit.other_services.twitter.identifier }}
