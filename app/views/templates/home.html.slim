@@ -11,7 +11,7 @@
         button.btn.btn-default type="button" data-dismiss="modal" Cancel
 
 header
-  .progress.progress-striped.active#indexing-progress ng-show="progress < 100" ng-controller="IndexingProgressCtrl"
+  .progress.progress-striped.active#indexing-progress ng-show="indexing" ng-controller="IndexingProgressCtrl"
     .progress-bar.progress-bar-success role="progressbar" ng-style="{ width: progress + '%' }"
       | {{ progress }}% (
       ng-pluralize> count="meetups" when="{'0': 'no meetups', '1': '1 meetup', 'other': '{{ meetups }} meetups' }"

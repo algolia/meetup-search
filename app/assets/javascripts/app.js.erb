@@ -74,10 +74,12 @@ meetupSearchApp.controller('IndexingProgressCtrl', ['$rootScope', '$scope', func
   $scope.progress = 0;
   $scope.meetups = 0;
   $scope.attendees = 0;
+  $scope.indexing = false;
 
   function progress() {
     $.ajax('/progress.json', { type: 'GET', cache: false }).done(function(data) {
       $scope.progress = data.progress;
+      $scope.indexing = data.progress > 0 && data.progress < 100;
       $scope.meetups = data.meetups;
       $scope.attendees = data.attendees;
       if (!$scope.$$phase) {
