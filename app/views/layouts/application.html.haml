@@ -1,14 +1,12 @@
 !!!
-%html
+%html{'ng-app' => 'meetupSearchApp'}
   %head
     %meta{:name => "viewport", :content => "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, minimal-ui"}
-    %title= content_for?(:title) ? yield(:title) : 'Meetup Search powered by Algolia'
+    %title{'ng-bind' => "pageTitle"}
     %meta{:name => "description", :content => "Search Meetup's RSVPs."}
     %link{:rel => "shortcut icon", :href=> image_path('favicon.ico')}
     = stylesheet_link_tag 'http://static1.meetupstatic.com/fonts/whitney.css'
     = stylesheet_link_tag 'application', media: 'all'
-    = javascript_include_tag 'application'
-    = javascript_include_tag '//platform.linkedin.com/in.js'
     = csrf_meta_tags
 
     %meta{name: "twitter:card", content: "summary"}
@@ -27,7 +25,23 @@
     %meta{property: "og:image:width", content: '600' }
     %meta{property: "og:image:height", content: '450' }
   %body
-    = yield
+
+    %div{'ng-view' => true}
+    
+    %footer
+      .text-center
+        Meetup Search powered by
+        = link_to "http://www.algolia.com" do
+          = image_tag "http://www.algolia.com/assets/algolia128x40.png"
+        –
+        Fork us on
+        = link_to "http://github.com/algolia/meetup-search" do
+          github
+          %i.fa.fa-github
+
+    = javascript_include_tag 'application'
+    = javascript_include_tag '//platform.linkedin.com/in.js'
+
     :javascript
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-32446386-1']);
@@ -38,3 +52,9 @@
         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
+
+    :javascript
+      !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+    :javascript
+      jQuery.timeago.settings.allowFuture = true;

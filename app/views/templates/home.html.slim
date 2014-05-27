@@ -1,0 +1,60 @@
+.modal.fade#modal-sign-in
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close type="button" data-dismiss="modal" aria-hidden=true &times;
+        h3.modal-title Sign in with your Meetup account
+      .modal-body
+        .text-center.m-t.m-b
+          = link_to "Sign in with Meetup", '/auth/meetup', class: 'btn btn-red'
+      .modal-footer
+        button.btn.btn-default type="button" data-dismiss="modal" Cancel
+
+header
+  / .progress.progress-striped.active#indexing-progress style='display: none;'
+  /   .progress-bar.progress-bar-success role="progressbar" style="width: 0%;"
+  /     | 0%
+  .container
+    .row
+      .col-xs-6.col-sm-8.text-left
+        h3.logo
+          = link_to root_path do
+            = image_tag "//img2.meetupstatic.com/img/header/logo-2x.png", height: 45
+          span.hidden-xs
+            | Meetup Search
+            span.hidden-sm.hidden-xs< by Algolia 
+      .col-xs-6.col-sm-4.text-right
+        - if current_user
+          = link_to "Sign out", signout_path, method: :delete, class: 'logout'
+        - else
+          = link_to "Sign in with Meetup", '/auth/meetup', class: 'login'
+
+= render partial: 'search'
+
+section.home-wrapper ng-if="!api_key"
+  .container
+    .row.m-t
+      .col-sm-3
+        .text-center
+          i.text-5em.fa.fa-retweet
+        h3.text-center Connect
+        p.text-justify Connect with attendees sharing your interests even before meeting them.
+      .col-sm-3.col-sm-offset-1
+        .text-center
+          i.text-5em.fa.fa-exchange
+        h3.text-center Network
+        p.text-justify Add them to your LinkedIn, Twitter & Facebook networks.
+      .col-sm-3.col-sm-offset-1
+        .text-center
+          i.text-5em.fa.fa-repeat
+        h3.text-center Remember
+        p.text-justify Find people you've met the day before, even if you don't know their full name.
+    .row.m-t
+      .col-md-6.col-md-offset-3
+        .well.bg-color-white
+          h3 Features
+          ul
+            li.h4 Search across your upcoming and past meetups
+            li.h4 Typo-tolerated attendees search
+            li.h4 Multi-attributes search, single searchbox
+

@@ -31,6 +31,7 @@ GEM
     algoliasearch-rails (1.10.2)
       algoliasearch (>= 1.2.5)
       json (>= 1.5.1)
+    angularjs-rails (1.2.16)
     arel (4.0.2)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
@@ -48,6 +49,7 @@ GEM
     bourbon (3.2.1)
       sass (~> 3.2)
       thor
+    bower-rails (0.7.3)
     builder (3.1.4)
     coderay (1.1.0)
     coffee-rails (4.0.1)
@@ -186,6 +188,14 @@ GEM
     simple_form (3.0.2)
       actionpack (~> 4.0)
       activemodel (~> 4.0)
+    slim (2.0.2)
+      temple (~> 0.6.6)
+      tilt (>= 1.3.3, < 2.1)
+    slim-rails (2.1.4)
+      actionpack (>= 3.0, < 4.2)
+      activesupport (>= 3.0, < 4.2)
+      railties (>= 3.0, < 4.2)
+      slim (~> 2.0)
     sprockets (2.11.0)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -197,6 +207,7 @@ GEM
       sprockets (~> 2.8)
     sqlite3 (1.3.9)
     state_machine (1.2.0)
+    temple (0.6.7)
     therubyracer (0.12.1)
       libv8 (~> 3.16.14.0)
       ref
@@ -220,11 +231,13 @@ PLATFORMS
 
 DEPENDENCIES
   algoliasearch-rails
+  angularjs-rails
   better_errors
   binding_of_caller
   bluepill
   bootstrap-sass
   bourbon
+  bower-rails
   coffee-rails (~> 4.0.0)
   delayed_job
   delayed_job_active_record
@@ -251,6 +264,7 @@ DEPENDENCIES
   ruby_meetup2
   sass-rails (~> 4.0.2)
   simple_form
+  slim-rails
   sqlite3
   therubyracer
   thin

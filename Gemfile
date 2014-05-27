@@ -11,6 +11,7 @@ gem 'jbuilder', '~> 1.2'
 gem 'bootstrap-sass'
 gem 'figaro'
 gem 'haml-rails'
+gem "slim-rails"
 gem 'omniauth'
 gem 'rest-client'
 gem 'omniauth-meetup'
@@ -27,7 +28,9 @@ gem 'faker'
 gem 'bluepill'
 gem 'therubyracer'
 gem 'hipchat'
-gem "font-awesome-rails"
+gem 'font-awesome-rails'
+gem 'angularjs-rails'
+gem "bower-rails"
 
 group :development do
   gem 'better_errors'

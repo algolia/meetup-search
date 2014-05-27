@@ -16,6 +16,10 @@
   @include button-variant(white, rgb(224, 57, 62), rgb(224, 57, 62));
 }
 
+[ng-click] {
+    cursor: pointer;
+}
+
 @media(max-width: $screen-xs-max) {
   body { font-size: 11px; }
   h1, .h1 { font-size: 19px; margin-top: 14px; margin-bottom: 7px; }

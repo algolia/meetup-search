@@ -1,0 +1,153 @@
+var meetupSearchApp = angular
+  .module('meetupSearchApp', ['ngRoute', 'ngResource', 'ngSanitize', 'pasvaz.bindonce'])
+  .constant('ALGOLIA_APPLICATION_ID', '<%= ENV['ALGOLIA_APPLICATION_ID'] %>')
+  .constant('ALGOLIA_INDEX', '<%= RSVPS_INDEX.name %>');
+
+meetupSearchApp.factory('Event', ['$resource', function($resource) {
+  return $resource('/events/:id.json', { id: '@id' });
+}]);
+
+meetupSearchApp.factory('User', ['$resource', function($resource) {
+  return $resource('/user.json');
+}]);
+
+meetupSearchApp.filter('timeago', function() {
+  var localUTCOffset = new Date().getTimezoneOffset() * 60 * 1000;
+  return function(hit) {
+    return $.timeago(new Date(hit.event.time + hit.event.utc_offset + localUTCOffset));
+  };
+});
+
+meetupSearchApp.filter('startFrom', function() {
+  return function(input, start) {
+    start = +start; //parse to int
+    return input.slice(start);
+  };
+});
+
+meetupSearchApp.filter('if', function() {
+  return function(input, value) {
+    if (typeof(input) === 'string') {
+      input = [input, ''];
+    }
+    return value? input[0] : input[1];
+  };
+});
+
+meetupSearchApp.config(['$routeProvider', function($routeProvider) {
+  $routeProvider
+    .when('/e/:id', {
+      templateUrl: '/templates/event.html',
+      controller: 'EventCtrl',
+      resolve: {
+        event: function($route, Event) {
+          return Event.get({ id: $route.current.params.id }).$promise;
+        }
+      }
+    })
+    .otherwise({
+      templateUrl:
+      '/templates/home.html',
+      controller: 'HomeCtrl',
+      resolve: {
+        credentials: function($route, User) {
+          return User.get().$promise;
+        }
+      }
+    });
+}]);
+
+meetupSearchApp.controller('EventCtrl', ['$rootScope', '$scope', '$routeParams', 'event', function($rootScope, $scope, $routeParams, event) {
+  $scope.event = event.data;
+  $scope.api_key = event.api_key;
+  $scope.tags = event.tags;
+  $rootScope.pageTitle = 'Search ' + event.data.name + '\'s attendees';
+}]);
+
+meetupSearchApp.controller('HomeCtrl', ['$rootScope', '$scope', 'credentials', function($rootScope, $scope, credentials) {
+  $scope.api_key = credentials.api_key;
+  $scope.tags = credentials.tags;
+  $rootScope.pageTitle = 'Meetup Search powered by Algolia';
+}]);
+
+meetupSearchApp.controller('SearchCtrl', ['$scope', 'ALGOLIA_APPLICATION_ID', 'ALGOLIA_INDEX', function($scope, ALGOLIA_APPLICATION_ID, ALGOLIA_INDEX) {
+  $scope.hits = [];
+  $scope.facets = [];
+  $scope.q = '';
+
+  if (!$scope.api_key) {
+    $scope.search = function() {
+      $('#modal-sign-in').modal('show');
+    };
+    return;
+  }
+
+  var algolia = new AlgoliaSearch(ALGOLIA_APPLICATION_ID, $scope.api_key);
+  algolia.setSecurityTags($scope.tags);
+  var helper = new AlgoliaSearchHelper(algolia, ALGOLIA_INDEX, {
+    facets: ['city', 'topics.name', 'event.name', 'event.venue.name']
+  });
+
+  function reloadTwitter() {
+    $('.twitter-follow-button').show();
+    window.twttr.widgets.load();
+  }
+
+  var LABELS = {
+    'city' : 'City',
+    'topics.name' : 'Topics',
+    'event.name' : 'Events',
+    'event.venue.name' : 'Venues'
+  };
+
+  var twitterReloader = null;
+
+  $scope.search = function(keepRefinements) {
+    if (!keepRefinements) {
+      helper.refinements = {};
+    }
+    helper.search($scope.q, function(success, content) {
+      if (!success || content.query != $scope.q) {
+        return;
+      }
+
+      $scope.hits = content.hits;
+      
+      var facets = [];
+      for (var facet in content.facets) {
+        var values = [];
+        for (var f in content.facets[facet]) {
+          values.push([f, content.facets[facet][f]]);
+        }
+        if (values.length === 0) {
+          continue;
+        } else if (values.length === 1 && !helper.isRefined(facet, values[0][0])) {
+          continue;
+        }
+        values.sort(function(a, b) { return b[1] - a[1]; });
+        facets.push({ facet: facet, label: LABELS[facet], values: values });
+      }
+      $scope.facets = facets;
+
+      if (!$scope.$$phase) {
+        $scope.$apply();
+      }
+
+      if (twitterReloader) {
+        clearTimeout(twitterReloader);
+      }
+      twitterReloader = setTimeout(reloadTwitter, 2000);
+    }, { distinct: true, maxValuesPerFacet: 10, minWordSizefor1Typo: 4, minWordSizefor2Typos: 8, advancedSyntax: true });
+  };
+
+  $scope.toggleRefine = function(facet, value) {
+    helper.toggleRefine(facet, value);
+    $scope.search(true);
+  };
+
+  $scope.isRefined = function(facet, value) {
+    return helper.isRefined(facet, value);
+  };
+
+  $scope.search();
+}]);

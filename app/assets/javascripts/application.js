@@ -16,4 +16,9 @@
 //= require bootstrap
 //= require algolia/algoliasearch.min
 //= require hogan
+//= require angular
+//= require angular-route
+//= require angular-resource
+//= require angular-sanitize
+//= require angular-bindonce/bindonce.min.js
 //= require_tree .

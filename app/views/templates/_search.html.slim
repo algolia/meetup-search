@@ -1,0 +1,63 @@
+div ng-controller="SearchCtrl"
+  section.search-wrapper
+    .container
+      .row ng-show="!q" ng-if="!event"
+        .col-lg-12
+          h1.text-center.hidden-xs
+            | Search your meetups
+            span.hidden-sm.hidden-xs< & their attendees
+        .col-lg-12.text-center.m-t.hidden-xs
+          a.m-r.twitter-follow-button href="https://twitter.com/algolia" data-show-count="false" data-show-screen-name="true" Follow @algolia
+          a.m-l.twitter-share-button href="https://twitter.com/share" data-url=root_url data-via="algolia" data-text='Search your meetups &amp; attendees' Tweet
+      .row
+        .col-md-8.col-md-offset-2.col-sm-12
+          .search-form
+            .search-input
+              input#q type='text' placeholder='Search attendees by name, company, ...' autocomplete='off' spellcheck='false' autocorrect='off' autocapitalize='off' ng-model='q' ng-keyup='search()'
+              .branding
+                | search by
+                = link_to "http://www.algolia.com" do
+                  = image_tag "http://www.algolia.com/assets/algolia_white.png"
+
+  section.hits-wrapper
+    .container
+      .col-sm-3.hidden-xs
+        .facet ng-repeat="f in facets" bindonce=true
+          h3
+            | {{ f.label }}
+          ul.list-unstyled
+            li ng-repeat="v in f.values" ng-class="'active' | if: isRefined(f.facet, v[0])"
+              a> ng-click="toggleRefine(f.facet, v[0])" {{ v[0] }}
+              | ({{ v[1] }})
+      .col-sm-9
+        .hit ng-repeat="hit in hits" bindonce=true
+          .thumb.hidden-xs
+            img src="{{ hit.photo.thumb_link }}"
+          .infos
+            h3
+              img.visible-xs src="{{ hit.photo.thumb_link }}"
+              a href="{{ hit.link }}" bo-html="hit._highlightResult.name.value"
+              a href="{{ hit.other_services.linkedin.identifier }}" bo-if="hit.other_services.linkedin.identifier"
+                img src="//developer.linkedin.com/sites/default/files/LinkedIn_Logo16px.png"
+              a.twitter-follow-button style="display: none" href="https://twitter.com/{{ hit.other_services.twitter.identifier }}" data-show-count="true" data-show-screen-name="true" bo-if="hit.other_services.twitter.identifier"
+                | Follow {{ hit.other_services.twitter.identifier }}
+            ul.h4.list-unstyled
+              li
+                ' Seen at:
+                span bo-html="hit._highlightResult.event.name.value"
+                span bo-if="hit.event.role"
+                  |, {{ hit.event.role }}
+                small<
+                  | ({{ hit | timeago }} @
+                  span bo-html="hit._highlightResult.event.venue.name.value"
+                  | )
+            p.m-t bo-if="hit.bio" bo-html="hit._highlightResult.bio.value"
+            p.m-t bo-if="hit.event.bio" bo-html="_highlightResult.event.bio.value"
+          .clearfix.hidden-xs
+          .topics.hidden-xs
+            span.label.label-topic ng-repeat="topic in hit.topics | limitTo: 10" {{ topic.name }}
+            small.pull-left ng-if="hit.topics.length > 10" ng-show="!hit.toggleTopics"
+              a.text-muted ng-click="hit.toggleTopics = !hit.toggleTopics" See {{ hit.topics.length - 10 }} more...
+            span.label.label-topic ng-show="hit.toggleTopics" ng-repeat="topic in hit.topics | startFrom:10" {{ topic.name }}
+            .clearfix
+
