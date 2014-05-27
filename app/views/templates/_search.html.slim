@@ -32,10 +32,10 @@ div ng-controller="SearchCtrl"
       .col-sm-9
         .hit ng-repeat="hit in hits" bindonce=true
           .thumb.hidden-xs
-            img src="{{ hit.photo.thumb_link }}"
+            img ng-src="{{ hit.photo.thumb_link }}"
           .infos
             h3
-              img.visible-xs src="{{ hit.photo.thumb_link }}"
+              img.visible-xs ng-src="{{ hit.photo.thumb_link }}"
               a> href="{{ hit.link }}" bo-html="hit._highlightResult.name.value"
               a> href="{{ hit.other_services.linkedin.identifier }}" bo-if="hit.other_services.linkedin.identifier"
                 img src="//developer.linkedin.com/sites/default/files/LinkedIn_Logo16px.png"
