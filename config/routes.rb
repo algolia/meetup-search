@@ -12,8 +12,7 @@ MeetupSearch::Application.routes.draw do
   # backward compatibility
   get '/e/:event_id' => redirect { |params, request| "/#/events/#{params[:event_id]}" }
 
-  # TODO
-  # match '/progress', via: [:get, :post, :xhr], as: :progress, controller: 'sessions', action: 'progress'
+  match '/progress', via: [:get, :post, :xhr], as: :progress, controller: 'sessions', action: 'progress'
 
   root "welcome#new"
 end

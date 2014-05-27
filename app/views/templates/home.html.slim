@@ -11,16 +11,20 @@
         button.btn.btn-default type="button" data-dismiss="modal" Cancel
 
 header
-  / .progress.progress-striped.active#indexing-progress style='display: none;'
-  /   .progress-bar.progress-bar-success role="progressbar" style="width: 0%;"
-  /     | 0%
+  .progress.progress-striped.active#indexing-progress ng-show="progress < 100" ng-controller="IndexingProgressCtrl"
+    .progress-bar.progress-bar-success role="progressbar" ng-style="{ width: progress + '%' }"
+      | {{ progress }}% (
+      ng-pluralize> count="meetups" when="{'0': 'no meetups', '1': '1 meetup', 'other': '{{ meetups }} meetups' }"
+      | &amp;
+      ng-pluralize< count="attendees" when="{'0': 'no attendees', '1': '1 attendee', 'other': '{{ attendees }} attendees' }"
+      |)
   .container
     .row
       .col-xs-6.col-sm-8.text-left
         h3.logo
           = link_to root_path do
             = image_tag "//img2.meetupstatic.com/img/header/logo-2x.png", height: 45
-          span.hidden-xs
+          span.hidden-xs<
             | Meetup Search
             span.hidden-sm.hidden-xs< by Algolia 
       .col-xs-6.col-sm-4.text-right

@@ -70,6 +70,29 @@ meetupSearchApp.controller('HomeCtrl', ['$rootScope', '$scope', 'credentials', f
   $rootScope.pageTitle = 'Meetup Search powered by Algolia';
 }]);
 
+meetupSearchApp.controller('IndexingProgressCtrl', ['$rootScope', '$scope', function($rootScope, $scope) {
+  $scope.progress = 0;
+  $scope.meetups = 0;
+  $scope.attendees = 0;
+
+  function progress() {
+    $.ajax('/progress.json', { type: 'GET', cache: false }).done(function(data) {
+      $scope.progress = data.progress;
+      $scope.meetups = data.meetups;
+      $scope.attendees = data.attendees;
+      if (!$scope.$$phase) {
+        $scope.$apply();
+      }
+      if (data.progress < 100) {
+        setTimeout(progress, 1000);
+      }
+      //window.helper.client.clearCache();
+    });
+  }
+
+  progress();
+}]);
+
 meetupSearchApp.controller('SearchCtrl', ['$scope', 'ALGOLIA_APPLICATION_ID', 'ALGOLIA_INDEX', function($scope, ALGOLIA_APPLICATION_ID, ALGOLIA_INDEX) {
   $scope.hits = [];
   $scope.facets = [];
