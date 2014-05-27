@@ -52,7 +52,7 @@ div ng-controller="SearchCtrl"
                   span bo-html="hit._highlightResult.event.venue.name.value"
                   | )
             p.m-t bo-if="hit.bio" bo-html="hit._highlightResult.bio.value"
-            p.m-t bo-if="hit.event.bio" bo-html="_highlightResult.event.bio.value"
+            p.m-t bo-if="hit.event.bio" bo-html="hit._highlightResult.event.bio.value"
           .clearfix.hidden-xs
           .topics.hidden-xs
             span.label.label-topic ng-repeat="topic in hit.topics | limitTo: 10" {{ topic.name }}
