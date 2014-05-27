@@ -87,7 +87,7 @@ meetupSearchApp.controller('IndexingProgressCtrl', ['$rootScope', '$scope', func
       }
       if (data.progress < 100) {
         $rootScope.$emit('algolia:indexing');
-        setTimeout(progress, 1000);
+        setTimeout(progress, 5000);
       }
     });
   }
