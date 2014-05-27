@@ -86,16 +86,16 @@ meetupSearchApp.controller('IndexingProgressCtrl', ['$rootScope', '$scope', func
         $scope.$apply();
       }
       if (data.progress < 100) {
+        $rootScope.$emit('algolia:indexing');
         setTimeout(progress, 1000);
       }
-      //window.helper.client.clearCache();
     });
   }
 
   progress();
 }]);
 
-meetupSearchApp.controller('SearchCtrl', ['$scope', 'ALGOLIA_APPLICATION_ID', 'ALGOLIA_INDEX', function($scope, ALGOLIA_APPLICATION_ID, ALGOLIA_INDEX) {
+meetupSearchApp.controller('SearchCtrl', ['$rootScope', '$scope', 'ALGOLIA_APPLICATION_ID', 'ALGOLIA_INDEX', function($rootScope, $scope, ALGOLIA_APPLICATION_ID, ALGOLIA_INDEX) {
   $scope.hits = [];
   $scope.facets = [];
   $scope.q = '';
@@ -111,6 +111,10 @@ meetupSearchApp.controller('SearchCtrl', ['$scope', 'ALGOLIA_APPLICATION_ID', 'A
   algolia.setSecurityTags($scope.tags);
   var helper = new AlgoliaSearchHelper(algolia, ALGOLIA_INDEX, {
     facets: ['city', 'topics.name', 'event.name', 'event.venue.name']
+  });
+
+  $rootScope.$on('algolia:indexing', function() {
+    helper.client.clearCache();
   });
 
   function reloadTwitter() {
