@@ -1,0 +1,24 @@
+header
+  .progress.progress-striped.active#indexing-progress ng-show="indexing" ng-controller="IndexingProgressCtrl"
+    .progress-bar.progress-bar-success role="progressbar" ng-style="{ width: progress + '%' }"
+      | {{ progress }}% (
+      ng-pluralize> count="meetups" when="{'0': 'no meetups', '1': '1 meetup', 'other': '{{ meetups }} meetups' }"
+      | &amp;
+      ng-pluralize< count="attendees" when="{'0': 'no attendees', '1': '1 attendee', 'other': '{{ attendees }} attendees' }"
+      |)
+  .container
+    .row
+      .col-xs-6.col-sm-8.text-left
+        h3.logo
+          = link_to root_path do
+            = image_tag "//img2.meetupstatic.com/img/header/logo-2x.png", height: 45
+          span.hidden-xs<
+            | Meetup Search
+            span.hidden-sm.hidden-xs< by Algolia 
+      .col-xs-6.col-sm-4.text-right
+        - if current_user
+          ul.list-inline.list-unstyled
+            li = link_to 'My Meetups', '#/events', class: 'logout'
+            li = link_to "Sign out", signout_path, method: :delete, class: 'logout'
+        - else
+          = link_to "Sign in with Meetup", '/auth/meetup', class: 'login'

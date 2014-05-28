@@ -48,7 +48,7 @@ div ng-controller="SearchCtrl"
                 span bo-if="hit.event.role"
                   |, {{ hit.event.role }}
                 small<
-                  | ({{ hit | timeago }} @
+                  | ({{ hit.event.time + hit.event.utc_offset | timeago }} @
                   span bo-html="hit._highlightResult.event.venue.name.value"
                   | )
             p.m-t bo-if="hit.bio" bo-html="hit._highlightResult.bio.value"

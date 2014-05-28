@@ -16,7 +16,7 @@
   @include button-variant(white, rgb(224, 57, 62), rgb(224, 57, 62));
 }
 
-[ng-click] {
+[ng-click], [bo-href] {
     cursor: pointer;
 }
 

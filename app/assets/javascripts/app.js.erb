@@ -7,14 +7,18 @@ meetupSearchApp.factory('Event', ['$resource', function($resource) {
   return $resource('/events/:id.json', { id: '@id' });
 }]);
 
+meetupSearchApp.factory('Events', ['$resource', function($resource) {
+  return $resource('/events');
+}]);
+
 meetupSearchApp.factory('User', ['$resource', function($resource) {
   return $resource('/user.json');
 }]);
 
 meetupSearchApp.filter('timeago', function() {
   var localUTCOffset = new Date().getTimezoneOffset() * 60 * 1000;
-  return function(hit) {
-    return $.timeago(new Date(hit.event.time + hit.event.utc_offset + localUTCOffset));
+  return function(time) {
+    return $.timeago(new Date(time + localUTCOffset));
   };
 });
 
@@ -45,6 +49,15 @@ meetupSearchApp.config(['$routeProvider', function($routeProvider) {
         }
       }
     })
+    .when('/events', {
+      templateUrl: '/templates/events.html',
+      controller: 'EventsCtrl',
+      resolve: {
+        events: function($route, Events) {
+          return Events.get().$promise;
+        }
+      }
+    })
     .otherwise({
       templateUrl:
       '/templates/home.html',
@@ -55,6 +68,11 @@ meetupSearchApp.config(['$routeProvider', function($routeProvider) {
         }
       }
     });
+}]);
+
+meetupSearchApp.controller('EventsCtrl', ['$rootScope', '$scope', 'events', function($rootScope, $scope, events) {
+  $scope.events = events.data;
+  $rootScope.pageTitle = 'Your meetups';
 }]);
 
 meetupSearchApp.controller('EventCtrl', ['$rootScope', '$scope', '$routeParams', 'event', function($rootScope, $scope, $routeParams, event) {

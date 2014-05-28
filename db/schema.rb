@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140521163706) do
+ActiveRecord::Schema.define(version: 20140528214246) do
 
   create_table "delayed_jobs", force: true do |t|
     t.integer  "priority",   default: 0, null: false
@@ -30,12 +30,14 @@ ActiveRecord::Schema.define(version: 20140521163706) do
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
 
   create_table "events", force: true do |t|
-    t.integer "member_uid", null: false
-    t.string  "uid",        null: false
+    t.integer "member_uid",            null: false
+    t.string  "uid",                   null: false
     t.text    "raw_cache"
+    t.string  "slug",       limit: 32, null: false
   end
 
   add_index "events", ["member_uid", "uid"], name: "index_events_on_member_uid_and_uid"
+  add_index "events", ["slug"], name: "index_events_on_slug"
   add_index "events", ["uid"], name: "index_events_on_uid"
 
   create_table "group_members", force: true do |t|

@@ -1,5 +1,6 @@
 MeetupSearch::Application.routes.draw do
   get "templates/event"
+  get "templates/events"
   get "templates/home"
   get "/auth/:provider/callback" => "sessions#create"
   get "/auth/failure", to: redirect('/')
@@ -7,6 +8,7 @@ MeetupSearch::Application.routes.draw do
   delete "/signout" => "sessions#destroy", as: :signout
 
   get '/events/:id', as: :event, controller: 'welcome', action: 'event'
+  get '/events', as: :events, controller: 'welcome', action: 'events'
   get '/user', as: :user, controller: 'welcome', action: 'credentials'
 
   # backward compatibility
