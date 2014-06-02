@@ -1,7 +1,7 @@
 Meetup Search
 ===============
 
-This is the Rails 4 application providing [Meetup Search](http://meetup.algolia.com/). It's based on [algoliasearch-client-ruby](https://github.com/algolia/algoliasearch-client-ruby) and [omniauth-meetup](https://github.com/tapster/omniauth-meetup).
+This is the Rails 4 application providing [Meetup Search](http://meetupsearch.algolia.com/). It's based on [algoliasearch-client-ruby](https://github.com/algolia/algoliasearch-client-ruby) and [omniauth-meetup](https://github.com/tapster/omniauth-meetup).
 
 Index settings
 ----------------------
@@ -10,11 +10,12 @@ Index settings
 Algolia.init application_id: ENV['ALGOLIA_APPLICATION_ID'], api_key: ENV['ALGOLIA_API_KEY']
 RSVPS_INDEX = Algolia::Index.new("meetup_rsvps_#{Rails.env}")
 RSVPS_INDEX.set_settings({
-  attributesToIndex: ['name', 'bio', 'event.bio', 'city', 'event.name', 'other_services.twitter.identifier', 'event.venue.name'],
+  attributesToIndex: ['name', 'bio', 'event.bio', 'city', 'unordered(event.name)', 'other_services.twitter.identifier', 'event.venue.name'],
   attributesForFaceting: ['topics.name', 'city', 'event.name', 'event.venue.name'],
   attributeForDistinct: 'uid',
-  customRanking: ['desc(membership_count)']
+  customRanking: ['desc(membership_count)', 'asc(name)', 'desc(event.time)']
 })
+
 ```
 
 Secure indexing
