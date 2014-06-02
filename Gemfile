@@ -31,6 +31,7 @@ gem 'hipchat'
 gem 'font-awesome-rails'
 gem 'angularjs-rails'
 gem "bower-rails"
+gem 'actionpack-page_caching'
 
 group :development do
   gem 'better_errors'
